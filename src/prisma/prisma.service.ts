@@ -170,7 +170,11 @@ export class PrismaService implements OnModuleDestroy {
             return true;
           }
 
-          if (key === 'shippedAt' && typeof value === 'object' && 'lte' in value) {
+          if (
+            key === 'shippedAt' &&
+            typeof value === 'object' &&
+            'lte' in value
+          ) {
             const lte = (value as any).lte as Date;
             return escrow.shippedAt !== null && escrow.shippedAt <= lte;
           }
