@@ -14,5 +14,6 @@ import { StellarWebhookService } from './stellar-webhook.service';
   imports: [EscrowModule],
   controllers: [StellarWebhookController],
   providers: [StellarWebhookService],
+  exports: [StellarWebhookService],
 })
 export class WebhooksModule {}
