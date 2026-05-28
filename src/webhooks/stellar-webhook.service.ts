@@ -80,6 +80,29 @@ export class StellarWebhookService {
     return { received: true };
   }
 
+  /**
+   * Programmatic processing for replayed operations (no signature verification).
+   * Returns true when processed, false when skipped (duplicate).
+   */
+  async processOperationDto(dto: StellarWebhookDto): Promise<{ processed: boolean; skipped?: boolean }> {
+    if (this.processedIds.has(dto.id)) {
+      this.logger.log(
+        JSON.stringify({ msg: 'stellar.replay.duplicate', operationId: dto.id }),
+      );
+      return { processed: false, skipped: true };
+    }
+
+    this.processedIds.add(dto.id);
+    try {
+      await this.processEvent(dto);
+    } catch (err) {
+      this.processedIds.delete(dto.id);
+      throw err;
+    }
+
+    return { processed: true };
+  }
+
   // ---------------------------------------------------------------------------
   // Private helpers
   // ---------------------------------------------------------------------------

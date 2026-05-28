@@ -4,16 +4,18 @@ import { NotificationsModule } from '../notifications/notifications.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { DisputeModule } from '../dispute/dispute.module';
 import { S3PresignService } from '../common/services/s3-presign.service';
+import { CacheService } from '../common/cache.service';
 import { EscrowController } from './escrow.controller';
 import { VendorEscrowController } from './vendor-escrow.controller';
 import { EscrowRepository } from './escrow.repository';
 import { EscrowService } from './escrow.service';
 import { BuyerDisputeService } from './buyer-dispute.service';
+import { LogisticsService } from '../logistics/logistics.service';
 
 @Module({
   imports: [PrismaModule, NotificationsModule, DisputeModule],
   controllers: [EscrowController, VendorEscrowController],
-  providers: [EscrowService, EscrowRepository, BuyerDisputeService, S3PresignService, JwtGuard],
+  providers: [EscrowService, EscrowRepository, BuyerDisputeService, S3PresignService, JwtGuard, LogisticsService, CacheService],
   exports: [EscrowService, EscrowRepository],
 })
 export class EscrowModule {}

@@ -8,6 +8,8 @@ import {
 } from '@nestjs/common';
 import { NotificationsService } from '../notifications/notifications.service';
 import { EscrowRecord } from '../prisma/prisma.service';
+import { LogisticsService } from '../logistics/logistics.service';
+import { CacheService } from '../common/cache.service';
 import { EscrowResponseDto } from './dto/escrow-response.dto';
 import { EscrowSummaryDto } from './dto/escrow-summary.dto';
 import { CreateEscrowDto } from './dto/create-escrow.dto';
@@ -24,7 +26,34 @@ export class EscrowService {
   constructor(
     private readonly escrowRepository: EscrowRepository,
     private readonly notificationsService: NotificationsService,
+    private readonly logisticsService?: LogisticsService,
+    private readonly cacheService?: CacheService,
   ) {}
+
+  async getTracking(id: string): Promise<{ status: string } & { cached?: boolean }> {
+    const escrow = await this.findById(id);
+
+    if (!escrow.trackingId) {
+      throw new NotFoundException('Tracking information not available');
+    }
+
+    const key = `tracking:${escrow.trackingId}`;
+    const cached = await this.cacheService?.get<{ status: string }>(key);
+    if (cached) {
+      return { ...cached, cached: true };
+    }
+
+    try {
+      const status = await this.logisticsService.getStatus(escrow.trackingId);
+      await this.cacheService?.set(key, status, 60);
+      return { ...status, cached: false };
+    } catch (err) {
+      if (cached) {
+        return { ...cached, cached: true };
+      }
+      throw err;
+    }
+  }
 
   async createEscrow(
     dto: CreateEscrowDto,

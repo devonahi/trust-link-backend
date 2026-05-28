@@ -18,6 +18,7 @@ import { StellarModule } from './stellar/stellar.module';
 import { VendorModule } from './vendor/vendor.module';
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { StressTestModule } from './stress-test/stress-test.module';
+import { CacheService } from './common/cache.service';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { StressTestModule } from './stress-test/stress-test.module';
   controllers: [AppController],
   providers: [
     AppService,
+    CacheService,
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter,
