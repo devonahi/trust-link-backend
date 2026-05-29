@@ -25,7 +25,18 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Trust-Link Backend — NestJS escrow API for Stellar blockchain payments.
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | System design and module overview |
+| [CHANGELOG.md](./CHANGELOG.md) | Version history (semver) |
+| [SECURITY.md](./SECURITY.md) | Security policy and vulnerability disclosure |
+| [docs/TRACING.md](./docs/TRACING.md) | OpenTelemetry distributed tracing |
+| [docs/INCIDENT_RESPONSE_RUNBOOK.md](./docs/INCIDENT_RESPONSE_RUNBOOK.md) | Incident response and recovery procedures |
+| [.env.example](./.env.example) | Environment variable reference |
 
 ## Project setup
 

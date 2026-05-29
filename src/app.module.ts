@@ -14,6 +14,8 @@ import { RateLimitGuard } from './common/guards/rate-limit.guard';
 import { LoggerModule } from './common/logger/logger.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { SecurityMiddleware } from './common/middleware/security.middleware';
+import { TracingMiddleware } from './tracing/tracing.middleware';
+import { TracingModule } from './tracing/tracing.module';
 import { CacheModule } from './cache/cache.module';
 import { ConfigModule } from './config/config.module';
 import { EscrowModule } from './escrow/escrow.module';
@@ -28,6 +30,7 @@ import { CacheService } from './common/cache.service';
   imports: [
     // Core infrastructure
     ConfigModule,
+    TracingModule,
     PrismaModule,
     LoggerModule,
     CacheModule,
@@ -68,6 +71,8 @@ import { CacheService } from './common/cache.service';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(SecurityMiddleware, LoggerMiddleware).forRoutes('*');
+    consumer
+      .apply(SecurityMiddleware, TracingMiddleware, LoggerMiddleware)
+      .forRoutes('*');
   }
 }

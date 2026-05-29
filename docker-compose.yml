@@ -11,9 +11,13 @@ services:
       - REDIS_URL=redis://redis:6379
       - SEP10_JWT_SECRET=your-super-secure-jwt-secret-at-least-32-characters-long
       - ADMIN_ADDRESS=GXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      - OTEL_ENABLED=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318
+      - OTEL_SERVICE_NAME=trustlink-backend
     depends_on:
       - db
       - redis
+      - jaeger
     restart: unless-stopped
 
   db:
@@ -34,6 +38,15 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    restart: unless-stopped
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.62
+    ports:
+      - "16686:16686"   # Jaeger UI
+      - "4318:4318"     # OTLP HTTP receiver
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
     restart: unless-stopped
 
 volumes:

@@ -1,3 +1,4 @@
+import './tracing/tracing.bootstrap';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';

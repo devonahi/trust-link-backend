@@ -33,6 +33,11 @@ import { ConfigService } from './config.service';
         // Issue #103 – Redis connection URL for response caching.
         // Omitting this disables caching gracefully (no-op fallback).
         REDIS_URL: Joi.string().uri().optional(),
+        // Issue #79 – OpenTelemetry distributed tracing
+        OTEL_ENABLED: Joi.string().valid('true', 'false').default('true'),
+        OTEL_SERVICE_NAME: Joi.string().default('trustlink-backend'),
+        OTEL_SERVICE_VERSION: Joi.string().default('1.0.0'),
+        OTEL_EXPORTER_OTLP_ENDPOINT: Joi.string().uri().optional(),
       }),
     }),
   ],
