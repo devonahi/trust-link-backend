@@ -16,6 +16,10 @@ export interface Config {
   LOG_LEVEL?: string;
   API_BASE_URL?: string;
   REDIS_URL?: string;
+  OTEL_ENABLED?: string;
+  OTEL_SERVICE_NAME?: string;
+  OTEL_SERVICE_VERSION?: string;
+  OTEL_EXPORTER_OTLP_ENDPOINT?: string;
 }
 
 @Injectable()

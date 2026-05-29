@@ -1,5 +1,6 @@
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { AppService } from './app.service';
+import { getAppVersion } from './common/version';
 import { ConfigService } from './config/config.service';
 
 @Controller()
@@ -21,7 +22,7 @@ export class AppController {
       status: 'ok',
       timestamp: new Date().toISOString(),
       environment: this.configService.get('NODE_ENV'),
-      version: '1.0.0',
+      version: getAppVersion(),
     };
   }
 
@@ -29,7 +30,7 @@ export class AppController {
   @HttpCode(HttpStatus.OK)
   getVersion() {
     return {
-      version: '1.0.0',
+      version: getAppVersion(),
       name: '@truestlink/trustlink-backend',
       environment: this.configService.get('NODE_ENV'),
     };

@@ -1,50 +1,98 @@
-# Security Guidelines
+# Security Policy
 
-## Environment Variables
+Trust-Link Backend handles escrow funds, Stellar wallet authentication, and sensitive vendor data. This document defines our security standards and the process for reporting vulnerabilities.
 
-### Required Security Configuration
+## Supported Versions
 
-1. **SEP10_JWT_SECRET**: Must be at least 32 characters long and cryptographically secure
-2. **ADMIN_ADDRESS**: Must be a valid Stellar public key for admin operations
-3. **DATABASE_URL**: Should use SSL in production environments
+| Version | Supported |
+|---------|-----------|
+| 1.0.x   | Yes       |
+| < 1.0   | No        |
 
-### Best Practices
+Security fixes are released as patch versions (e.g. `1.0.1`) following [Semantic Versioning](https://semver.org/).
 
-- Never commit `.env` files to version control
-- Use different secrets for different environments
-- Rotate secrets regularly
-- Use environment-specific configuration management
+## Reporting a Vulnerability
 
-## API Security
+**Do not open a public GitHub issue for security vulnerabilities.**
 
-### Rate Limiting
+Report security issues privately using one of these channels:
 
-The application implements rate limiting on API endpoints:
-- Escrow creation: 10 requests per minute
-- Escrow retrieval: 100 requests per minute  
-- Shipment updates: 20 requests per minute
+| Channel | Contact |
+|---------|---------|
+| Email (preferred) | security@trust-link.io |
+| GitHub (private) | Use [GitHub Security Advisories](https://github.com/truestlink/trust-link-backend/security/advisories/new) on this repository |
 
-### Input Validation
+Include as much detail as possible:
 
-- All inputs are validated using class-validator
-- Stellar addresses are validated using the Stellar SDK
-- Tracking IDs are sanitized and validated
-- Amount limits are enforced
+1. Description of the vulnerability and potential impact
+2. Steps to reproduce (proof-of-concept if available)
+3. Affected endpoints, versions, or components
+4. Your contact information for follow-up
 
-### Authentication
+### Response Timeline
 
-- SEP-10 compliant Stellar authentication
-- JWT tokens with 1-hour expiration
-- Replay attack protection for challenges
+| Stage | Target |
+|-------|--------|
+| Initial acknowledgement | Within **48 hours** |
+| Severity assessment | Within **5 business days** |
+| Fix or mitigation plan | Within **15 business days** for High/Critical |
+| Coordinated disclosure | After a patch is available |
 
-## Security Headers
+We follow coordinated disclosure: please allow reasonable time for a fix before public disclosure. We will credit reporters who wish to be acknowledged (unless you prefer anonymity).
 
-The application automatically sets security headers:
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: DENY`
-- `X-XSS-Protection: 1; mode=block`
-- `Referrer-Policy: strict-origin-when-cross-origin`
+### Safe Harbor
 
-## Reporting Security Issues
+Good-faith security research conducted in accordance with this policy will not be pursued legally. Do not:
 
-Please report security vulnerabilities to the maintainers privately.
+- Access data belonging to other users
+- Perform denial-of-service attacks
+- Modify or destroy production data
+- Use social engineering against Trust-Link staff or users
+
+## Scope
+
+In scope:
+
+- Trust-Link Backend API (`/escrow`, `/vendor`, `/auth/sep10`, `/webhooks`, `/admin`)
+- Authentication and authorization flaws (SEP-10 JWT, admin guards)
+- Injection, IDOR, and business-logic vulnerabilities in escrow flows
+- Secrets exposure, misconfiguration, or insecure defaults in this repository
+
+Out of scope:
+
+- Third-party services (Stellar Horizon, SendGrid, Twilio) — report to those vendors directly
+- Social engineering, physical security, or client-side-only issues in frontend apps
+- Issues in dependencies with no available fix (we track and patch promptly when fixes exist)
+
+## Security Controls
+
+### Environment Variables
+
+| Variable | Requirement |
+|----------|-------------|
+| `SEP10_JWT_SECRET` | Minimum 32 characters; cryptographically random in production |
+| `ADMIN_ADDRESS` | Valid Stellar public key (G...) |
+| `DATABASE_URL` | TLS/SSL required in production |
+| `STELLAR_WEBHOOK_SECRET` | Required in production for webhook HMAC verification |
+
+Never commit `.env` files. Use environment-specific secret management (Vault, AWS Secrets Manager, etc.).
+
+### API Security
+
+- **Rate limiting** on escrow, shipment, and auth endpoints
+- **Input validation** via `class-validator` and Stellar SDK address checks
+- **SEP-10 authentication** with JWT (1-hour expiry) and challenge replay protection
+- **Security headers** via middleware: `X-Content-Type-Options`, `X-Frame-Options`, `X-XSS-Protection`, `Referrer-Policy`
+
+### Operational Security
+
+- Structured JSON logging for audit trails (see `src/common/logger/`)
+- Distributed tracing for incident investigation (see `docs/TRACING.md`)
+- Docker images run as non-root user (`nestjs`, UID 1001)
+- Health checks at `GET /health` for orchestrator readiness
+
+## Security Updates
+
+Subscribe to repository releases and review `CHANGELOG.md` for security-related entries under the **Security** category.
+
+For urgent advisories, affected parties will be notified via GitHub Security Advisories and the contact email above.
