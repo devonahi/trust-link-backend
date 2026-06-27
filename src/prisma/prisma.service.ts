@@ -18,7 +18,7 @@ export type NotificationType =
   | 'DISPUTED'
   | 'COMPLETED'
   | 'REFUNDED';
-export type DisputeState = 'OPEN' | 'UNDER_REVIEW' | 'RESOLVED';
+export type DisputeState = 'OPEN' | 'UNDER_REVIEW' | 'RESOLVED' | 'CANCELLED' | 'ABANDONED';
 
 export interface EscrowRecord {
   id: string;
