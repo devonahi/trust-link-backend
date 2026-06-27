@@ -66,6 +66,16 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  /**
+   * Health check endpoint that verifies database connectivity,
+   * Stellar Horizon reachability, and Redis status. Redis is
+   * optional — a disabled or down Redis does not affect the
+   * overall health status.
+   *
+   * @param res - Express response object
+   * @returns Health status with component-level details, version, and timing
+   * @authentication None (public endpoint)
+   */
   @ApiOperation({ summary: 'Service health check — database, Horizon, and Redis' })
   @ApiResponse({ status: 200, description: 'All components healthy.' })
   @ApiResponse({ status: 503, description: 'One or more components are down.' })
@@ -130,6 +140,12 @@ export class AppController {
       .json(body);
   }
 
+  /**
+   * Returns the application version and environment information.
+   *
+   * @returns Version string, package name, and current environment
+   * @authentication None (public endpoint)
+   */
   @ApiOperation({ summary: 'Get current application version and environment' })
   @ApiResponse({ status: 200, description: 'Version information returned.' })
   @Get('version')
